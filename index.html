@@ -1,0 +1,74 @@
+
+	<div class="col-md-4">
+	  <div class="cards">
+		<div class="card-body">
+		  <h3 class="card-title">Account Status</h3>
+		  <h3 class="card-text text-right" id="account_status_span" class="account_status_span" ></h3>
+		</div>
+	  </div>
+	</div>
+	
+	
+	<script>
+	window.addEventListener("load", function(){
+			var monthly_spent = '[user.total_spent]';
+			var available_funds = '[user.available_funds]';
+			var total_orders = '[panel.last_order_id]';
+			
+			monthly_spent = monthly_spent.replace(",", ".");
+			monthly_spent = parseFloat(monthly_spent);
+			
+			available_funds = available_funds.replace(",", ".");
+			available_funds = parseFloat(available_funds);
+			
+			total_orders = total_orders.replace(",", ".");
+			total_orders = parseFloat(total_orders);
+			
+			var exchange_rate = '[panel.currency.exchange_rate]';
+			exchange_rate = exchange_rate.replace(",", ".");
+			exchange_rate = parseFloat(exchange_rate);
+			
+			balance_limit  = 1000 * exchange_rate;
+			
+			var pcr_orders = ( total_orders / 100000000 ) * 100;
+			
+			prc_funds =  ( available_funds / balance_limit ) * 100;
+			
+			
+			
+			//console.log(exchange_rate);
+			//monthly_spent = monthly_spent * exchange_rate;
+			
+			var subscriptions = '[{"name":"NEW","min":"0","max":"49.9999"},{"name":"JUNIOR","min":"50","max":"999.9999"},{"name":"FREQUENT","min":"1000","max":"2499.9999"},{"name":"ELITE","min":"2500","max":"14999.9999"},{"name":"VIP","min":"15000","max":"49999.9999"},{"name":"MASTER","min":"50000","max":"1000000000"}]';
+			subscriptions = JSON.parse(subscriptions);
+			if( subscriptions.length > 0 ){
+				var total_subscription =  subscriptions.length;
+				for (index = 0; index < subscriptions.length; index++) {
+					if( typeof subscriptions[index].min !== 'undefined' ){
+						var subs = subscriptions[index];
+						var min_spent = parseFloat(subs.min) * exchange_rate;
+						var max_spent = parseFloat(subs.max) * exchange_rate;
+						
+						
+						
+						if( monthly_spent >= min_spent && monthly_spent <= max_spent ){
+							
+							var total_spent_limit = max_spent - min_spent;
+							var above_monthly_spent = monthly_spent - min_spent;
+							var remaining_spent = max_spent - above_monthly_spent;
+							
+							
+							
+							
+							//total_spent_bar
+							//
+							$( ".account_status_span" ).html(subs.name);
+						}
+						
+					}
+				}
+			}
+			
+			
+		});
+	</script>
